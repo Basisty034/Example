@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Sederhana</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+    <div class="bg-white w-full max-w-md rounded-lg shadow-lg overflow-hidden flex flex-col">
+        <!-- Header -->
+        <div class="bg-blue-600 text-white text-center py-4">
+            <h1 class="text-lg font-semibold">Chatbot Sederhana</h1>
+        </div>
+
+        <!-- Chat Area -->
+        <div id="chatArea" class="p-4 h-96 overflow-y-auto space-y-4 bg-gray-50">
+            <!-- Chat messages will appear here -->
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 bg-gray-200">
+            <div class="flex space-x-2">
+                <input 
+                    id="userInput" 
+                    type="text" 
+                    placeholder="Tulis pesan Anda..." 
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                />
+                <button 
+                    id="sendBtn" 
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none"
+                >
+                    Kirim
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatArea = document.getElementById('chatArea');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // Function to simulate chatbot response
+        function getBotResponse(message) {
+            if (message.toLowerCase().includes('halo')) {
+                return 'Halo! Ada yang bisa saya bantu?';
+            } else if (message.toLowerCase().includes('nama')) {
+                return 'Saya adalah chatbot sederhana!';
+            } else if (message.toLowerCase().includes('cuaca')) {
+                return 'Saya tidak tahu cuaca sekarang, tapi semoga hari Anda cerah!';
+            } else {
+                return 'Maaf, saya tidak mengerti. Bisa ulangi?';
+            }
+        }
+
+        // Function to add message to chat area with animation
+        function addMessage(message, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                sender === 'user' ? 'bg-blue-100 self-end' : 'bg-gray-200 self-start'
+            } opacity-0 transform translate-y-4`;
+
+            messageDiv.textContent = message;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex flex-col';
+            wrapper.appendChild(messageDiv);
+
+            chatArea.appendChild(wrapper);
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+            // Animate message to appear
+            setTimeout(() => {
+                messageDiv.classList.remove('opacity-0', 'translate-y-4');
+                messageDiv.classList.add('opacity-100', 'translate-y-0');
+            }, 10);
+        }
+
+        // Event listener for send button
+        sendBtn.addEventListener('click', () => {
+            const userMessage = userInput.value.trim();
+            if (userMessage) {
+                addMessage(userMessage, 'user'); // Add user's message
+                userInput.value = ''; // Clear the input field
+
+                // Add bot's response after a delay
+                setTimeout(() => {
+                    const botResponse = getBotResponse(userMessage);
+                    addMessage(botResponse, 'bot');
+                }, 1000); // Delay bot's response to simulate typing
+            }
+        });
+
+        // Allow sending message with Enter key
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+
+        // Optional: Display a welcome message when the chat starts
+        window.onload = () => {
+            setTimeout(() => {
+                addMessage('Halo! Saya chatbot, ada yang bisa saya bantu?', 'bot');
+            }, 500);
+        };
+    </script>
+</body>
+</html>
